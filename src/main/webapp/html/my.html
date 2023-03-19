@@ -1,11 +1,68 @@
 <html>
 <head>
     <title>RPG</title>
+    <link rel="stylesheet" href="css/my.css">
     <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-    <link href="/css/my.css" rel="stylesheet">
+<!--    <script type="text/javascript" src="js/main.js"></script>-->
 </head>
 <body>
 <h1>RPG admin panel</h1>
+<table id="main-table-01">
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Title</th>
+        <th>Race</th>
+        <th>Profession</th>
+        <th>Level</th>
+        <th>Birthday</th>
+        <th>Banned</th>
+    </tr>
+</table>
+<script>
+    // $("h1").fadeTo(4000, 0.2);
+    // let h1Text = $("h1").hide().text("Hello").show(2200);
 
+    function fadeElement(element,timeOne,timeTwo){
+       $(element).fadeTo(timeOne,timeTwo);
+    }
+    function slideUpDown(element,timeOne,timeTwo){
+        $(element).slideUp(timeOne).slideDown(timeTwo);
+    }
+
+    function animateElement(element,time){
+        $(element).animate({
+            'font-size':'24px',
+            'padding-top':'20px'
+        },time);
+    }
+
+    // $("h1").click(function (){
+    //     alert("MouseOver");
+    // });
+
+    // $("th").each(function (){
+    //     $(this).slideUp(2222);
+    // });
+
+    function add_table() {
+        var url = "/rpg_war_exploded/rest/players";
+        var done = $.get(url,function (response)
+        {
+            $.each(response,function (i,item){
+                $(this).appendTo("#main-table-01")
+            });
+        });
+
+
+    }
+add_table();
+
+
+
+
+
+
+</script>
 </body>
 </html>
