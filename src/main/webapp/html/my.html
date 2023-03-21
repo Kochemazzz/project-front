@@ -3,10 +3,25 @@
     <title>RPG</title>
     <link rel="stylesheet" href="css/my.css">
     <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-<!--    <script type="text/javascript" src="js/main.js"></script>-->
+    <script type="text/javascript" src="js/main.js"></script>
 </head>
-<body>
+<body onload="add_table()">
 <h1>RPG admin panel</h1>
+
+<label for="conter-1">number of accounts per page </label>
+<select id="conter-1" onchange="add_table(0)">
+    <option value="3">3</option>
+    ;
+    <option value="5">5</option>
+    ;
+    <option value="10">10</option>
+    ;
+    <option value="15">15</option>
+    ;
+    <option value="20">20</option>
+    ;
+</select>
+
 <table id="main-table-01">
     <tr>
         <th>#</th>
@@ -19,49 +34,77 @@
         <th>Banned</th>
     </tr>
 </table>
+Pages;
+<div id="button-page">
+
+</div>
 <script>
-    // $("h1").fadeTo(4000, 0.2);
-    // let h1Text = $("h1").hide().text("Hello").show(2200);
+    jQuery.ajaxSetup({async: false});
 
-    function fadeElement(element,timeOne,timeTwo){
-       $(element).fadeTo(timeOne,timeTwo);
-    }
-    function slideUpDown(element,timeOne,timeTwo){
-        $(element).slideUp(timeOne).slideDown(timeTwo);
-    }
+    function add_table(page_number) {
+        $("tr:has(td)").remove();
 
-    function animateElement(element,time){
-        $(element).animate({
-            'font-size':'24px',
-            'padding-top':'20px'
-        },time);
-    }
+        let url = "/rest/players?";
+        let countPerPage = $("#count_1").val();
+        if(countPerPage == null){
+            countPerPage = 3;
+        }
+        url = url.concat("pageSize=").concat(countPerPage);
+        if(page_number == null) {
+            page_number = 0;
+        }
+        url = url.concat("&pageNumber=").concat(page_number);
 
-    // $("h1").click(function (){
-    //     alert("MouseOver");
-    // });
 
-    // $("th").each(function (){
-    //     $(this).slideUp(2222);
-    // });
-
-    function add_table() {
-        var url = "/rpg_war_exploded/rest/players";
-        var done = $.get(url,function (response)
-        {
-            $.each(response,function (i,item){
-                $(this).appendTo("#main-table-01")
+        $.get(url, function (response) {
+            $.each(response, function (i, item) {
+                $('<tr>').html("<td>" + item.id + "</td>"
+                    + "<td>" + item.name + "</td>"
+                    + "<td>" + item.title + "</td>"
+                    + "<td>" + item.race + "</td>"
+                    + "<td>" + item.profession + "</td>"
+                    + "<td>" + item.level + "</td>"
+                    + "<td>" + new Date(item.birthday).toLocaleDateString() + "</td>"
+                    + "<td>" + item.banned + "</td>").appendTo("#main-table-01")
             });
         });
 
+        let totalCount = add_pages();
+        let countPerPages = $("#conter-1").val();
 
+        if (countPerPages==null){
+            countPerPages = 3;
+        }
+        let pagesCount = Math.ceil(totalCount/countPerPages);
+        console.log(pagesCount);
+
+        $("button.pgn-bnt-styled").remove();
+
+        for (let i = 0; i < pagesCount ; i++) {
+            let button_num = "<button>" + (i+1) + "</button>";
+            let button = $(button_num)
+                .attr("id","paging_button_" +i)
+                .attr("onclick","add_table("+ i + ")")
+                .addClass("pgn-bnt-styled");
+            $("#button-page").append(button);
+
+
+
+
+        }
     }
-add_table();
 
 
 
-
-
+    function add_pages() {
+        let url = "/rest/players/count"
+        let totalCount = 0;
+        $.get(url, {async: false}, function (count) {
+            totalCount = parseInt(count);
+        });
+        console.log(totalCount);
+        return totalCount;
+    }
 
 </script>
 </body>
