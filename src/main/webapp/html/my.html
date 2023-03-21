@@ -7,8 +7,9 @@
 </head>
 <body onload="add_table()">
 <h1>RPG admin panel</h1>
-<label for="conter-1">number of accounts per page </label>
-<select id="conter-1" onchange="add_table(0)">
+
+<label for="counter-1">number of accounts per page </label>
+<select id="counter-1" onchange="add_table(0)">
     <option value="3">3</option>
     ;
     <option value="5">5</option>
@@ -35,6 +36,7 @@
 </table>
 Pages;
 <div id="button-page">
+
 </div>
 <script>
     jQuery.ajaxSetup({async: false});
@@ -43,7 +45,7 @@ Pages;
         $("tr:has(td)").remove();
 
         let url = "/rest/players?";
-        let countPerPage = $("#count_1").val();
+        let countPerPage = $("#counter-1").val();
         if(countPerPage == null){
             countPerPage = 3;
         }
@@ -68,7 +70,7 @@ Pages;
         });
 
         let totalCount = add_pages();
-        let countPerPages = $("#conter-1").val();
+        let countPerPages = $("#counter-1").val();
 
         if (countPerPages==null){
             countPerPages = 3;
