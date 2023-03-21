@@ -32,6 +32,8 @@
         <th>Level</th>
         <th>Birthday</th>
         <th>Banned</th>
+        <th>Edit</th>
+        <th>Delete</th>
     </tr>
 </table>
 Pages;
@@ -87,6 +89,8 @@ Pages;
                 .attr("onclick","add_table("+ i + ")")
                 .addClass("pgn-bnt-styled");
             $("#button-page").append(button);
+            let buttonNumber = "#paging_button_" + page_number;
+            $(buttonNumber).onclick = activate_red(buttonNumber);
 
 
 
@@ -105,6 +109,13 @@ Pages;
         console.log(totalCount);
         return totalCount;
     }
+
+
+    function activate_red(element){
+        $(element).css("color","red")
+    }
+
+
 
 </script>
 </body>
