@@ -67,7 +67,10 @@ Pages;
                     + "<td>" + item.profession + "</td>"
                     + "<td>" + item.level + "</td>"
                     + "<td>" + new Date(item.birthday).toLocaleDateString() + "</td>"
-                    + "<td>" + item.banned + "</td>").appendTo("#main-table-01")
+                    + "<td>" + item.banned + "</td>"
+                    + "<td>"+"<button id='button_edit_' + item.id>" + "<img src = '/img/edit.png'>" +"</button>"+" </td>"
+                    + "<td>"+"<button id='button_delete_' + item.id onclick='delete_account("+ item.id +")'> " + "<img src = '/img/delete.png'>" +"</button>"+" </td>")
+                    .appendTo("#main-table-01")
             });
         });
 
@@ -91,6 +94,7 @@ Pages;
             $("#button-page").append(button);
             let buttonNumber = "#paging_button_" + page_number;
             $(buttonNumber).onclick = activate_red(buttonNumber);
+            console.log($(buttonNumber).text());
 
 
 
@@ -113,6 +117,21 @@ Pages;
 
     function activate_red(element){
         $(element).css("color","red")
+
+    }
+
+    function delete_account(id){
+
+        let url = "/rest/players/" + id;
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            success: function(result) {
+                add_table();
+            }
+        });
+
+
     }
 
 
