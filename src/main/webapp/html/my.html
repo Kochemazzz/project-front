@@ -3,13 +3,12 @@
     <title>RPG</title>
     <link rel="stylesheet" href="css/my.css">
     <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-    <script type="text/javascript" src="js/main.js"></script>
 </head>
 <body onload="add_table()">
 <h1>RPG admin panel</h1>
 
 <label for="counter-1">number of accounts per page </label>
-<select id="counter-1" onchange="add_table(0)">
+<select id="counter-1" onchange="add_table()">
     <option value="3">3</option>
     ;
     <option value="5">5</option>
@@ -41,22 +40,22 @@ Pages;
 
 </div>
 <script>
-    jQuery.ajaxSetup({async: false});
+
 
     function add_table(page_number) {
+
         $("tr:has(td)").remove();
 
         let url = "/rest/players?";
         let countPerPage = $("#counter-1").val();
-        if(countPerPage == null){
+        if (countPerPage == null) {
             countPerPage = 3;
         }
         url = url.concat("pageSize=").concat(countPerPage);
-        if(page_number == null) {
+        if (page_number == null) {
             page_number = 0;
         }
         url = url.concat("&pageNumber=").concat(page_number);
-
 
         $.get(url, function (response) {
             $.each(response, function (i, item) {
@@ -68,8 +67,8 @@ Pages;
                     + "<td>" + item.level + "</td>"
                     + "<td>" + new Date(item.birthday).toLocaleDateString() + "</td>"
                     + "<td>" + item.banned + "</td>"
-                    + "<td>"+"<button id='button_edit_' + item.id>" + "<img src = '/img/edit.png'>" +"</button>"+" </td>"
-                    + "<td>"+"<button id='button_delete_' + item.id onclick='delete_account("+ item.id +")'> " + "<img src = '/img/delete.png'>" +"</button>"+" </td>")
+                    + "<td>" + "<button id='button_edit_' + item.id onclick='edit_account(" + item.id + ")'>" + "<img src = '/img/edit.png'>" + "</button>" + " </td>"
+                    + "<td>" + "<button id='button_delete_' + item.id onclick='delete_account(" + item.id + ")'> " + "<img src = '/img/delete.png'>" + "</button>" + " </td>")
                     .appendTo("#main-table-01")
             });
         });
@@ -77,62 +76,87 @@ Pages;
         let totalCount = add_pages();
         let countPerPages = $("#counter-1").val();
 
-        if (countPerPages==null){
+        if (countPerPages == null) {
             countPerPages = 3;
         }
-        let pagesCount = Math.ceil(totalCount/countPerPages);
-        console.log(pagesCount);
-
+        let pagesCount = Math.ceil(totalCount / countPerPages);
         $("button.pgn-bnt-styled").remove();
 
-        for (let i = 0; i < pagesCount ; i++) {
-            let button_num = "<button>" + (i+1) + "</button>";
+        for (let i = 0; i < pagesCount; i++) {
+            let button_num = "<button>" + (i + 1) + "</button>";
             let button = $(button_num)
-                .attr("id","paging_button_" +i)
-                .attr("onclick","add_table("+ i + ")")
+                .attr("id", "paging_button_" + i)
+                .attr("onclick", "add_table(" + i + ")")
                 .addClass("pgn-bnt-styled");
             $("#button-page").append(button);
-            let buttonNumber = "#paging_button_" + page_number;
-            $(buttonNumber).onclick = activate_red(buttonNumber);
-            console.log($(buttonNumber).text());
-
-
-
-
         }
+            let buttonNumber = "#paging_button_" + page_number;
+            $(buttonNumber).css('color','red');
+
+    }
+    function delete_account(id) {
+
+        let url = "/rest/players/" + id;
+        $.ajax({
+            url: url,
+            async: false,
+            type: 'DELETE',
+            success: function () {
+                add_table(getCurrentPage());
+            }
+        });
+
+    }
+    function getCurrentPage(){
+        let current_page = 1;
+        $('button:parent(div)').each(function (){
+            if ($(this).css('color') === 'rgb(255,0,0)'){
+                current_page = $(this).text();
+                console.log("Done");
+            }
+        });
+        return parseInt(current_page) -1;
     }
 
+
+    function checkList(){
+        $("td").each(function (index){
+            console.log(index);
+        });
+    }
 
 
     function add_pages() {
         let url = "/rest/players/count"
         let totalCount = 0;
-        $.get(url, {async: false}, function (count) {
-            totalCount = parseInt(count);
-        });
-        console.log(totalCount);
+        $.ajax({
+            url:url,
+            async: false,
+            success: function (result){
+                totalCount = parseInt(result);
+            }
+        })
+
+        // $.get(url, {async: false}, function (count) {
+        //     totalCount = parseInt(count);
+        // });
         return totalCount;
     }
 
 
-    function activate_red(element){
-        $(element).css("color","red")
+    function activate_red(element) {
+        return $(element).css("color", "red")
 
     }
 
-    function delete_account(id){
-
-        let url = "/rest/players/" + id;
-        $.ajax({
-            url: url,
-            type: 'DELETE',
-            success: function(result) {
-                add_table();
-            }
-        });
-
+    function edit_account(id){
+        let button_edit = "#button_edit_" + id;
+        let button_delete = "#button_delete_"
+        $(button_delete).remove();
+        console.log("Кнопка удалена")
 
     }
+
 
 
 
